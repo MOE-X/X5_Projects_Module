@@ -23,6 +23,7 @@ class User extends Authenticatable
         'password',
         'phone',
         'dob',
+        'gender_id',
         'is_active',
     ];
 
@@ -57,5 +58,9 @@ class User extends Authenticatable
     public function admin()
     {
         return $this->hasOne(Admin::class);
+    }
+
+    public function gender(){
+        return $this->belongsTo(Gender::class);
     }
 }
