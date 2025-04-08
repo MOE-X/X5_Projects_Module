@@ -24,7 +24,7 @@ return new class extends Migration
             $table->string('password');
             $table->string('phone');
             $table->date('dob');
-            $table->foreignId('gender_id')->primary()->constrained()->onDelete('cascade');
+            $table->foreignId('gender_id')->constrained()->onDelete('cascade');
             $table->boolean('is_active')->default(true);
             $table->rememberToken();
             $table->timestamps();

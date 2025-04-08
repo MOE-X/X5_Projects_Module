@@ -12,7 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('students', function (Blueprint $table) {
-            $table->foreignId('user_id')->primary()->constrained()->onDelete('cascade');
+            $table->id();
+            $table->foreignId('user_id')->unique()->constrained()->onDelete('cascade');
             $table->string('github_link');
             $table->string('linkedin_link');
             $table->boolean('is_completed')->default(false);
