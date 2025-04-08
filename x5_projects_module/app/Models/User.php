@@ -63,4 +63,18 @@ class User extends Authenticatable
     public function gender(){
         return $this->belongsTo(Gender::class);
     }
+
+    public function batches()
+    {
+        return $this->belongsToMany(Batch::class, 'batch_course_student')
+            ->withPivot('course_id')
+            ->withTimestamps();
+    }
+
+    public function courses()
+    {
+        return $this->belongsToMany(Course::class, 'batch_course_student')
+            ->withPivot('batch_id')
+            ->withTimestamps();
+    }
 }
