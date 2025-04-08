@@ -77,4 +77,9 @@ class User extends Authenticatable
             ->withPivot('batch_id')
             ->withTimestamps();
     }
+
+    public function projects()
+    {
+        return $this->hasMany(Project::class);
+    }
 }
