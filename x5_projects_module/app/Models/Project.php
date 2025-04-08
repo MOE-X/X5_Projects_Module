@@ -35,4 +35,9 @@ class Project extends Model
     {
         return $this->belongsToMany(Student::class, 'project_student');
     }
+
+    public function tasks()
+    {
+        return $this->hasMany(Task::class);
+    }
 }
