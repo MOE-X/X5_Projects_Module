@@ -18,8 +18,15 @@ class Student extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function projects()
-    {
-        return $this->belongsToMany(Project::class, 'project_student');
+    public function projects() {
+        return $this->belongsToMany(Project::class, 'project_role_student')
+            ->withPivot('role_id')
+            ->withTimestamps();
+    }
+
+    public function roles() {
+        return $this->belongsToMany(Role::class, 'project_role_student')
+            ->withPivot('project_id')
+            ->withTimestamps();
     }
 }
