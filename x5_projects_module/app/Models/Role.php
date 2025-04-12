@@ -10,15 +10,15 @@ class Role extends Model
         'name',
     ];
 
-    public function students() {
-        return $this->belongsToMany(Student::class, 'project_role_student')
+    public function users() {
+        return $this->belongsToMany(User::class, 'project_role_user')
             ->withPivot('project_id')
             ->withTimestamps();
     }
 
     public function projects() {
-        return $this->belongsToMany(Project::class, 'project_role_student')
-            ->withPivot('student_id')
+        return $this->belongsToMany(Project::class, 'project_role_user')
+            ->withPivot('user_id')
             ->withTimestamps();
     }
 }
