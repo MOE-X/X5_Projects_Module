@@ -17,7 +17,7 @@ return new class extends Migration
             $table->timestamps();
         });
         
-        Schema::create('user_role', function (Blueprint $table) {
+        Schema::create('user_roles', function (Blueprint $table) {
             $table->id();
             $table->string('name')->unique();
             $table->timestamps();
@@ -31,7 +31,7 @@ return new class extends Migration
             $table->string('phone');
             $table->date('dob');
             $table->foreignId('gender_id')->constrained()->onDelete('cascade');
-            $table->foreignId('use_role_id')->constrained()->onDelete('cascade');
+            $table->foreignId('user_role_id')->constrained()->onDelete('cascade');
             $table->string('github_link')->nullable();
             $table->string('linkedin_link')->nullable();
             $table->boolean('is_completed')->default(false);
