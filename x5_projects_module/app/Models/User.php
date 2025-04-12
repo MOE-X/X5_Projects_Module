@@ -24,6 +24,9 @@ class User extends Authenticatable
         'phone',
         'dob',
         'gender_id',
+        'github_link',
+        'linkedin_link',
+        'is_completed',
         'is_active',
     ];
 
@@ -50,36 +53,41 @@ class User extends Authenticatable
         ];
     }
 
-    public function student()
-    {
-        return $this->hasOne(Student::class);
-    }
-
-    public function admin()
-    {
-        return $this->hasOne(Admin::class);
-    }
-
     public function gender(){
         return $this->belongsTo(Gender::class);
     }
 
+    public function userRole()
+    {
+        return $this->belongsTo(UserRole::class);
+    }
+
     public function batches()
     {
-        return $this->belongsToMany(Batch::class, 'batch_course_student')
+        return $this->belongsToMany(Batch::class, 'batch_course_user')
             ->withPivot('course_id')
             ->withTimestamps();
     }
 
     public function courses()
     {
-        return $this->belongsToMany(Course::class, 'batch_course_student')
+        return $this->belongsToMany(User::class, 'batch_course_user')
             ->withPivot('batch_id')
             ->withTimestamps();
     }
 
-    public function projects()
+    public function projects() 
     {
-        return $this->hasMany(Project::class);
+        return $this->belongsToMany(User::class, 'project_role_user')
+            ->withPivot('role_id')
+            ->withTimestamps();
     }
+
+    public function roles() {
+        return $this->belongsToMany(Role::class, 'project_role_user')
+            ->withPivot('project_id')
+            ->withTimestamps();
+    }
+
+
 }

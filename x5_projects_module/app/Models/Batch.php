@@ -15,13 +15,13 @@ class Batch extends Model
 
     public function courses()
     {
-        return $this->belongsToMany(Course::class, 'batch_course_student')
-            ->withPivot('student_id')
+        return $this->belongsToMany(Course::class, 'batch_course_user')
+            ->withPivot('user_id')
             ->withTimestamps();
     }
 
-    public function students(){
-        return $this->belongsToMany(Student::class, 'batch_course_student')
+    public function users(){
+        return $this->belongsToMany(User::class, 'batch_course_user')
             ->withPivot('course_id')
             ->withTimestamps();
     }

@@ -31,16 +31,16 @@ class Project extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function students() 
+    public function users() 
     {
-        return $this->belongsToMany(Student::class, 'project_role_student')
+        return $this->belongsToMany(User::class, 'project_role_user')
             ->withPivot('role_id')
             ->withTimestamps();
     }
 
     public function roles() {
-        return $this->belongsToMany(Role::class, 'project_role_student')
-            ->withPivot('student_id')
+        return $this->belongsToMany(Role::class, 'project_role_user')
+            ->withPivot('user_id')
             ->withTimestamps();
     }
 
