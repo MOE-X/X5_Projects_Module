@@ -24,6 +24,7 @@ class User extends Authenticatable
         'phone',
         'dob',
         'gender_id',
+        'user_role_id',
         'github_link',
         'linkedin_link',
         'is_completed',
@@ -71,7 +72,7 @@ class User extends Authenticatable
 
     public function courses()
     {
-        return $this->belongsToMany(User::class, 'batch_course_user')
+        return $this->belongsToMany(Course::class, 'batch_course_user')
             ->withPivot('batch_id')
             ->withTimestamps();
     }
