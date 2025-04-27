@@ -295,3 +295,4 @@ public function viewEnrolledCourses(Request $request, User $user)
         'data'    => $courses,
     ], 200);
 }
+}

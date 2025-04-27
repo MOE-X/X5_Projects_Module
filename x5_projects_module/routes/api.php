@@ -2,9 +2,11 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\BatchController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\RoleController;
 use App\Http\Controllers\Api\UserController;
+use App\Http\Controllers\API\CourseController;
 use App\Http\Controllers\API\ProjectTopicController;
 
 Route::get('/user', function (Request $request) {
@@ -59,4 +61,17 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/roles/{role}', [RoleController::class, 'update'])->middleware('can:update,role');
     Route::delete('/roles/{role}', [RoleController::class, 'destroy'])->middleware('can:delete,role');
 
+     // Batches (Admin-Only)
+     Route::get('/batches', [BatchController::class, 'index'])->middleware('can:viewAny,batch'); 
+     Route::get('/batches/{batch}', [BatchController::class, 'show'])->middleware('can:view,batch');
+     Route::post('/batches', [BatchController::class, 'store'])->middleware('can:create,batch'); 
+     Route::put('/batches/{batch}', [BatchController::class, 'update'])->middleware('can:update,batch');
+     Route::delete('/batches/{batch}', [BatchController::class, 'destroy'])->middleware('can:delete,batch');
+ 
+     // Courses (Admin-Only)
+     Route::get('/courses', [Coursecontroller::class, 'index'])->middleware('can:viewAny,course'); 
+     Route::get('/courses/{course}', [CourseController::class, 'show'])->middleware('can:view,course');
+     Route::post('/courses', [CourseController::class, 'store'])->middleware('can:create,course'); 
+     Route::put('/courses/{course}', [CourseController::class, 'update'])->middleware('can:update,course');
+     Route::delete('/courses/{course}', [CourseController::class, 'destroy'])->middleware('can:delete,course');
 });
