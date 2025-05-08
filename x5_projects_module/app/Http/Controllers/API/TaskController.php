@@ -6,10 +6,6 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Task;
 use Illuminate\Support\Facades\Auth;
-use App\Models\User;
-use App\Models\Project;
-use App\Models\TaskStatus;
-use App\Models\TaskType;
 
 class TaskController extends Controller
 {
