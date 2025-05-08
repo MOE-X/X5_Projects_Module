@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\RoleController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\API\CourseController;
 use App\Http\Controllers\API\ProjectTopicController;
+use App\Http\Controllers\API\TaskController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -20,6 +21,7 @@ Route::put('/project-topics/{id}', [ProjectTopicController::class, 'update']);
 Route::delete('/project-topics/{id}', [ProjectTopicController::class, 'destroy']);
 
 
+
 //Routes for guest users
 Route::middleware('guest')->group(function(){
     Route::post('/register', [AuthController::class, 'register']);
@@ -27,6 +29,11 @@ Route::middleware('guest')->group(function(){
 });
 
 Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/tasks', [TaskController::class, 'index']);
+    Route::post('/tasks', [TaskController::class, 'store']);
+    Route::get('/tasks/{id}', [TaskController::class, 'show']);
+    Route::put('/tasks/{id}', [TaskController::class, 'update']);
+    Route::delete('/tasks/{id}', [TaskController::class, 'destroy']);
     
     // Authenticated user actions
     Route::post('/logout', [AuthController::class, 'logout']);

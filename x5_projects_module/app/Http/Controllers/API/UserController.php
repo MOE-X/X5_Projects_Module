@@ -149,7 +149,7 @@ class UserController extends Controller
     
     // Loop through each course and add it to the pivot table without detaching existing courses.
     foreach ($courseIds as $courseId) {
-        $currentUser->batches()->syncWithoutDetaching([
+        $currentUser->batches->syncWithoutDetaching([
             $batchId => ['course_id' => $courseId]
         ]);
     }
