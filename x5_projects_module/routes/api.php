@@ -9,6 +9,7 @@ use App\Http\Controllers\API\CourseController;
 use App\Http\Controllers\API\BatchController;
 use App\Http\Controllers\API\EnrollmentController;
 use App\Http\Controllers\API\ProjectTopicController;
+use App\Http\Controllers\API\ProjectController;
 
 use App\Http\Controllers\API\TaskController;
 
@@ -16,6 +17,12 @@ Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 
+//Project topics
+Route::get('/project-topics', [ProjectTopicController::class, 'index']);
+Route::get('/project-topics/{id}', [ProjectTopicController::class, 'show']);
+Route::post('/project-topics', [ProjectTopicController::class, 'store']);
+Route::put('/project-topics/{id}', [ProjectTopicController::class, 'update']);
+Route::delete('/project-topics/{id}', [ProjectTopicController::class, 'destroy']);
 
 
 //Routes for guest users
@@ -85,4 +92,12 @@ Route::middleware('auth:sanctum')->group(function () {
      Route::post('/courses', [CourseController::class, 'store']); 
      Route::put('/courses/{course}', [CourseController::class, 'update'])->middleware('can:update,course');
      Route::delete('/courses/{course}', [CourseController::class, 'destroy'])->middleware('can:delete,course');
+
+      // Projects (Admin-Only)
+      Route::get('/projects', [Projectcontroller::class, 'index'])->middleware('can:viewAny,project'); 
+      Route::get('/projects/{project}', [Projectcontroller::class, 'show'])->middleware('can:view,project');
+      Route::post('/projects', [Projectcontroller::class, 'store'])->middleware('can:create,project'); 
+      Route::put('/projects/{project}', [Projectcontroller::class, 'update'])->middleware('can:update,project');
+      Route::delete('/projects/{project}', [Projectcontroller::class, 'destroy'])->middleware('can:delete,project');
+
 });

@@ -5,12 +5,15 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\ProjectTopic;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 class ProjectTopicController extends Controller
 {
+    use AuthorizesRequests;
     public function index()
     {
         // Logic to get all project topics
+        $this ->authorize('viewany', ProjectTopic::class);
         $topics = ProjectTopic::all();
 
         if ($topics->isEmpty()) {
@@ -25,6 +28,7 @@ class ProjectTopicController extends Controller
     public function show($id)
     {
         // Logic to get a specific project topic
+        $this ->authorize('view', ProjectTopic::class);
         $topic = ProjectTopic::find($id);
         if (!$topic) {
             return response()->json(['message' => 'Project topic not found'], 404);
@@ -38,6 +42,8 @@ class ProjectTopicController extends Controller
     public function store(Request $request)
     {
         // Logic to create a new project topic
+
+        $this ->authorize('create', ProjectTopic::class);
         $validatedData = $request->validate([
             'name' => 'required|string|min:3',
         ]);
@@ -57,6 +63,7 @@ class ProjectTopicController extends Controller
     public function update(Request $request, $id)
     {
         // Logic to update a project topic
+        $this ->authorize('update', ProjectTopic::class);
         $validatedData = $request->validate([
             'name' => 'required|string|min:3',
         ]);
@@ -77,6 +84,7 @@ class ProjectTopicController extends Controller
     public function destroy($id)
     {
         // Logic to delete a project topic
+        $this ->authorize('delete', ProjectTopic::class);
         $topic = ProjectTopic::find($id);
         if (!$topic) {
             return response()->json(['message' => 'Project topic not found'], 404);

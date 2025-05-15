@@ -46,6 +46,7 @@ class BatchPolicy
     {
         return $user->userRole->name === 'admin';
     }
+    
 
     /**
      * Determine whether the user can toggle the active status of a batch.
