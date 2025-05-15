@@ -6,6 +6,8 @@ use App\Models\User;
 use App\Models\Batch;
 use App\Models\Course;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class UserPolicy
@@ -69,30 +71,19 @@ class UserPolicy
         return false;
     }
 
-public function detachCourse(User $user, Batch $batch, Course $course)
-{
-    // For students, ensure they are enrolled in the specified batch/course.
-    return DB::table('batch_course_user')
-                ->where('user_id', $user->id)
-                ->where('batch_id', $batch->id)
-                ->where('course_id', $course->id)
-                ->exists();
-}
 
-public function detachStudentFromBatch(User $user,  Batch $batch)
-{
-    return DB::table('batch_course_user')
-            ->where('user_id', $user->id)
-            ->where('batch_id', $batch->id)
-            ->exists();
-} 
+    public function enrollstudent()
+    {
+        return false;
+    }
 
-/**
-* Users can view their own enrolled courses, admins can view any user’s courses.
-*/
-public function viewEnrolledCourses(User $user, User $model)
-{
-    return $user->id === $model->id;
-}
+
+    /**
+    * Users can view their own enrolled courses, admins can view any user’s courses.
+    */
+    public function viewEnrolledCourses(User $user, User $model)
+    {
+        return $user->id === $model->id;
+    }
 
 }

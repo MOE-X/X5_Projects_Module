@@ -2,123 +2,109 @@
 
 namespace App\Http\Controllers\API;
 
-use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Models\Task;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 class TaskController extends Controller
 {
-    public function index()
-    {
-        $user = Auth::user();
+    use AuthorizesRequests;
 
+    /**
+     * Display a paginated list of tasks.
+     * 
+     * Admins see all tasks; students see only those tasks whose project
+     * includes them as a member.
+     */
+    public function index(Request $request)
+    {
+        $this->authorize('viewAny', Task::class);
+        
+        $user = $request->user();
         if ($user->userRole->name === 'admin') {
-            // Admin: fetch all tasks
-            $tasks = Task::all();
+            $tasks = Task::paginate(10);
         } else {
-            // Regular user: fetch only their tasks
-            $project = $user->projects->first;
-            $tasks = $project->tasks;
+            // For students: filter tasks based on projects in which they are enrolled.
+            $tasks = Task::whereHas('project.users', function ($query) use ($user) {
+                $query->where('users.id', $user->id);
+            })->paginate(10);
         }
-
-        return response()->json($tasks);
+        
+        return response()->json($tasks, 200);
     }
 
-    public function show($id)
+    /**
+     * Display a specific task.
+     */
+    public function show(Task $task, Request $request)
     {
-        $user = Auth::user();
-        $task = Task::find($id);
-        if (!$task) {
-            return response()->json(['message' => 'Task not found'], 404);
-        }
-        $project = $task->project;
-        $users = $project->users;
-        if ($user->userRole->name === 'admin' || $users->contains($user)) {
-            // Admin or user in the project: show task details
-            return response()->json($task);
-        } else {
-            // Unauthorized access
-            return response()->json(['message' => 'Unauthorized'], 403);
-        }
+        $this->authorize('view', $task);
+        return response()->json($task, 200);
     }
 
+    /**
+     * Create a new task.
+     * Only admins can perform this action.
+     */
     public function store(Request $request)
     {
+        $this->authorize('create', Task::class);
 
-        // Logic to create a new task
         $validatedData = $request->validate([
-            'name' => 'required|string|min:3',
-            'description' => 'required|string|min:3',
-            'task_type_id' => 'required|exists:task_types,id',
-            'video_link' => 'nullable|url',
-            'project_id' => 'required|exists:projects,id',
+            'name'           => 'required|string|max:255',
+            'description'    => 'required|string',
+            'task_type_id'   => 'required|exists:task_types,id',
+            'video_link'     => 'nullable|string|max:255',
+            'project_id'     => 'required|exists:projects,id',
             'task_status_id' => 'required|exists:task_statuses,id',
-            'due_date' => 'required|date',
-            'result' => 'nullable|string'
+            'due_date'       => 'required|date',
+            'result'         => 'nullable|string',
         ]);
 
-        $user = Auth::user();
-
-        if ($user->userRole->name === 'admin') {
-            // Admin: Create a task for any project
-            $task = Task::create($validatedData);
-        } else {
-            // Regular user: fetch only their tasks
-            return response()->json(['message' => 'Unauthorized'], 403);
-        }
-
+        $task = Task::create($validatedData);
 
         return response()->json([
-            'message' => 'Task created successfully',
-            'data' => $task
+            'message' => 'Task created successfully.',
+            'data'    => $task,
         ], 201);
     }
 
-    public function update(Request $request, $id)
+    /**
+     * Update an existing task.
+     * Only admins are allowed to update tasks.
+     */
+    public function update(Request $request, Task $task)
     {
-        $user = Auth::user();
-        // Logic to update a task
+        $this->authorize('update', $task);
+
         $validatedData = $request->validate([
-            'name' => 'nullable|string|min:3',
-            'description' => 'nullable|string|min:3',
-            'task_type_id' => 'nullable|exists:task_types,id',
-            'video_link' => 'nullable|url',
-            'project_id' => 'nullable|exists:projects,id',
-            'task_status_id' => 'nullable|exists:task_statuses,id',
-            'due_date' => 'nullable|date',
-            'result' => 'nullable|string'
+            'name'           => 'sometimes|required|string|max:255',
+            'description'    => 'sometimes|required|string',
+            'task_type_id'   => 'sometimes|required|exists:task_types,id',
+            'video_link'     => 'nullable|string|max:255',
+            'task_status_id' => 'sometimes|required|exists:task_statuses,id',
+            'due_date'       => 'sometimes|required|date',
+            'result'         => 'nullable|string',
         ]);
-
-        $task = Task::find($id);
-        if (!$task) {
-            return response()->json(['message' => 'Task not found'], 404);
-        }
-
-        if ($user->userRole->name != 'admin'){
-            return response()->json(['message' => 'Unauthorized'], 403);
-        }
 
         $task->update($validatedData);
+
         return response()->json([
-            'message' => 'Task updated successfully',
-            'data' => $task
-        ]);
+            'message' => 'Task updated successfully.',
+            'data'    => $task,
+        ], 200);
     }
 
-    public function destroy($id)
+    /**
+     * Delete a task.
+     * Only admins are allowed to delete tasks.
+     */
+    public function destroy(Task $task)
     {
-        $user = Auth::user();
-        $task = Task::find($id);
-        if (!$task) {
-            return response()->json(['message' => 'Task not found'], 404);
-        }
-
-        if ($user->userRole->name != 'admin'){
-            return response()->json(['message' => 'Unauthorized'], 403);
-        }
-
+        $this->authorize('delete', $task);
         $task->delete();
-        return response()->json(['message' => 'Task deleted successfully']);
+
+        return response()->json(['message' => 'Task deleted successfully.'], 200);
     }
 }
