@@ -2,9 +2,9 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Api\AuthController;
-use App\Http\Controllers\Api\RoleController;
-use App\Http\Controllers\Api\UserController;
+use App\Http\Controllers\API\AuthController;
+use App\Http\Controllers\API\RoleController;
+use App\Http\Controllers\API\UserController;
 use App\Http\Controllers\API\CourseController;
 use App\Http\Controllers\API\BatchController;
 use App\Http\Controllers\API\EnrollmentController;
@@ -16,13 +16,6 @@ use App\Http\Controllers\API\TaskController;
 Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
-
-//Project topics
-Route::get('/project-topics', [ProjectTopicController::class, 'index']);
-Route::get('/project-topics/{id}', [ProjectTopicController::class, 'show']);
-Route::post('/project-topics', [ProjectTopicController::class, 'store']);
-Route::put('/project-topics/{id}', [ProjectTopicController::class, 'update']);
-Route::delete('/project-topics/{id}', [ProjectTopicController::class, 'destroy']);
 
 
 //Routes for guest users
@@ -71,6 +64,18 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/projects/{project}/enroll', [EnrollmentController::class, 'enrollInProject']); 
     Route::delete('/projects/{project}/detach', [EnrollmentController::class, 'detachRoleFromProject']);
 
+     //Task controller
+    Route::get('/tasks', [TaskController::class, 'index']);
+    Route::post('/tasks', [TaskController::class, 'store']);
+    Route::get('/tasks/{id}', [TaskController::class, 'show'])->middleware('can:view,task');
+    Route::put('/tasks/{id}', [TaskController::class, 'update'])->middleware('can:update,task');
+    Route::delete('/tasks/{id}', [TaskController::class, 'destroy'])->middleware('can:delete,task');
+    //project topics controller
+    Route::get('/project-topics', [ProjectTopicController::class, 'index']);
+    Route::get('/project-topics/{id}', [ProjectTopicController::class, 'show'])->middleware('can:view,projectTopic');
+    Route::post('/project-topics', [ProjectTopicController::class, 'store']);
+    Route::put('/project-topics/{id}', [ProjectTopicController::class, 'update'])->middleware('can:update,projectTopic');
+    Route::delete('/project-topics/{id}', [ProjectTopicController::class, 'destroy'])->middleware('can:delete,projectTopic');
 
     // Roles (Admin-Only)
     Route::get('/roles', [RoleController::class, 'index']); 
@@ -94,9 +99,9 @@ Route::middleware('auth:sanctum')->group(function () {
      Route::delete('/courses/{course}', [CourseController::class, 'destroy'])->middleware('can:delete,course');
 
       // Projects (Admin-Only)
-      Route::get('/projects', [Projectcontroller::class, 'index'])->middleware('can:viewAny,project'); 
+      Route::get('/projects', [Projectcontroller::class, 'index']); 
       Route::get('/projects/{project}', [Projectcontroller::class, 'show'])->middleware('can:view,project');
-      Route::post('/projects', [Projectcontroller::class, 'store'])->middleware('can:create,project'); 
+      Route::post('/projects', [Projectcontroller::class, 'store']); 
       Route::put('/projects/{project}', [Projectcontroller::class, 'update'])->middleware('can:update,project');
       Route::delete('/projects/{project}', [Projectcontroller::class, 'destroy'])->middleware('can:delete,project');
 
